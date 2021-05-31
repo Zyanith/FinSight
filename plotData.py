@@ -3,6 +3,7 @@ import pandas as pd
 
 
 def plotPriceWithTrend (time, price, trend):
+    """displays Cryptoprice with time and trend data"""
     # feed data lists into pandas dataframe
     df = pd.DataFrame({
         'time':time,
@@ -34,6 +35,7 @@ def plotPriceWithTrend (time, price, trend):
     plt.show()
 
 def plotPrice (time, price):
+    """displays Cryptoprice with time"""
     # feed data lists into pandas dataframe
     df = pd.DataFrame({
         'time':time,
