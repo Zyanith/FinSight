@@ -1,39 +1,31 @@
-import json
-import requests
 import matplotlib.pyplot as plt
 import pandas as pd
 import datetime
+import numpy as np
+from coingeckoAPI import getCryptoData
+from googleTrendsAPI import getGoogleTrendsDay
+from plotData import plotPriceWithTrend, plotPrice
 
-def getData (coin, currency, daysback):
-    """API call to coingecko for historical coin prices"""
-    api_url = ('https://api.coingecko.com/api/v3/coins/' + str(coin) +
-        '/market_chart?vs_currency=' + str(currency) +
-        '&days=' + str(daysback))
 
-    response = requests.get(api_url).text
-    return json.loads(response)
-
-# Get coin data
-data = getData('bitcoin', 'eur', '2')
+# Get price and trends data
+bitcoinPrice = getCryptoData('bitcoin', 'eur', '7')
+bitcoinTrends = getGoogleTrendsDay('bitcoin') # API limit 1 or 7 days only
 
 # initialise variables
 time = []
 price = []
+trend = list(np.array(bitcoinTrends)[0:,0:1])
 
 # format data to usable lists
-for day in data['prices']:
+for day in bitcoinPrice['prices']:
     # cuts ms
     time.append(datetime.datetime.fromtimestamp(int(day[0] / 1000)))
     price.append(day[1])
 
-# feed data lists into pandas dataframe
-df = pd.DataFrame({
-    'time':time,
-    'price':price
-})
+# cut unnecessary data
+time = time[:len(trend)]
+price = price[:len(trend)]
 
-# define matplotlib plot / gca stands for 'get current axis'
-df.plot(x='time',y='price',ax=plt.gca())
-
-# display plot
-plt.show()
+# plot data
+# plotPrice(time, price)
+plotPriceWithTrend(time, price, trend)

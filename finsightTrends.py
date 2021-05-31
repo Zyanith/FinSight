@@ -37,7 +37,7 @@ price = []
 trend = []
 
 #reading in csv
-trends_df = pd.read_csv("googleTrends5y.csv", header = 0)           
+trends_df = pd.read_csv("googleTrends5y.csv", header = 0)
 
 # format data to usable lists
 for day in data['prices']:
@@ -45,8 +45,8 @@ for day in data['prices']:
     date_time = datetime.date.fromtimestamp(int(day[0] / 1000)).strftime("%Y-%m-%d")
     if date_time <= trends_df["Week"].max():
         time.append(datetime.datetime.fromtimestamp(int(day[0] / 1000)))
-        price.append(day[1]) 
-        
+        price.append(day[1])
+
         #be wary of list length so only add trend for entire week in a loop(to avoid index errors)
         if date_time in trends_df.values:
                 current_trend = trends_df.loc[trends_df['Week'] == date_time, 'bitcoin: (Worldwide)'].iloc[0]
@@ -55,14 +55,14 @@ for day in data['prices']:
 
 
 #remove extra list entries from "trend" so lists have same length for DF
-difference  =  len(trend) - len(time) 
-trend = trend[:len(trend)-difference]    
+difference  =  len(trend) - len(time)
+trend = trend[:len(trend)-difference]
 #do the same for other two lists if they're the bigger ones (delete first entries instead)
 if difference < 0:
-    difference  =  len(time) - len(trend) 
-    del time[:difference]  
+    difference  =  len(time) - len(trend)
+    del time[:difference]
     del price[:difference]
-    
+
 # feed data lists into pandas dataframe
 df = pd.DataFrame({
     'time':time,
@@ -71,7 +71,7 @@ df = pd.DataFrame({
 })
 
 #save it as a csv file
-df.to_csv(r'C:\pCSV\new.csv', index = False)
+df.to_csv('./new.csv', index = False)
 
 
 ##plot
@@ -90,7 +90,7 @@ ax1.tick_params(axis='y', labelcolor=color)
 ax2 = ax1.twinx() #2nd axis
 
 color = 'tab:blue'
-ax2.set_ylabel('google trend %', color=color)  
+ax2.set_ylabel('google trend %', color=color)
 ax2.plot(df.time, df.trend, color=color)
 ax2.tick_params(axis='y', labelcolor=color)
 fig.autofmt_xdate()
@@ -111,7 +111,3 @@ plt.show()
 
 
 # In[ ]:
-
-
-
-
