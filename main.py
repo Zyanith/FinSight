@@ -4,8 +4,8 @@ import pandas as pd
 from coingeckoAPI import getCryptoData
 from googleTrendsAPI import getGoogleTrendsDay
 from plotData import plotPriceWithTrend, plotPrice
-from supportVectorRegression import formatTimeData, svrLinear, svrPoly, svrRBF
-from arimaForecasting import ADFtest, ARIMAcall, getResidualErrors, plotResults
+from arimaForecasting import ADFtest, ARIMAcall, getResidualErrors, \
+    plotResults, plotForecastResults
 
 # Get price and trends data
 bitcoinPrice = getCryptoData('bitcoin', 'eur', '1')
@@ -29,13 +29,15 @@ price = price[:len(trend)]
 price_df = pd.DataFrame(price)
 #price_df.columns(['price'])
 
-
 # plot data
 # plotPrice(time, price)
 # plotPriceWithTrend(time, price, trend)
 
 # ARIMA forcast
-ADF = ADFtest(price_df)
-ARIMAmodell = ARIMAcall(price_df)
-getResidualErrors(ARIMAmodell)
-plotResults(ARIMAmodell, 170)
+ADFtest(price_df)
+# ARIMAmodell = ARIMAcall(price_df)
+# getResidualErrors(ARIMAmodell)
+# plotResults(ARIMAmodell, 170)
+
+# ARIMA forcast with 80% Training Data & 20% Testing
+plotForecastResults(price_df, 30)

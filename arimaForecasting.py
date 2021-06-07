@@ -4,7 +4,7 @@ from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.arima_model import ARIMA
 from pmdarima.arima.utils import ndiffs
 from utils import getInteger
-from plotData import plotCorelation, plotResiduals
+from plotData import plotCorelation, plotResiduals, plotForecast
 
 
 def ADFtest(df):
@@ -62,6 +62,33 @@ def getResidualErrors(results):
 
 
 def plotResults(results, steps):
-    """displays Prediction and actual values for comparison """
+    """displays Prediction and actual values for comparison"""
     results.plot_predict(start=1, end=steps, dynamic=False)
     plt.show()
+
+
+def trainedARIMAcall(df, step):
+    """main function to make trained ARIMA model"""
+    train, test = splitData(df)
+
+    d = getADF(train)
+    p = getAR(train, d)
+    q = getMA(train, d)
+    model = fitARIMA(train, p, d, q)
+    print(model.summary())
+    fc, se, conf = model.forecast(step)
+    return test, fc, se, conf
+
+
+def splitData(data):
+    """split the data for upcomming forecast"""
+    n = int(len(data) * 0.8)
+    train = pd.DataFrame(data[0][:n])
+    test = pd.DataFrame(data[0][n:])
+    return train, test
+
+
+def plotForecastResults(df, steps):
+    """displayes the ARIMA forecast results"""
+    test, fc, se, conf = trainedARIMAcall(df, steps)
+    plotForecast(test, fc, se, conf, steps)

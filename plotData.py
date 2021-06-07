@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
+from statsmodels.tsa.arima_model import ARIMA
+
 
 def plotPriceWithTrend (time, price, trend):
     """displays Cryptoprice with time and trend data"""
@@ -74,4 +76,19 @@ def plotResiduals(residuals):
 
     ax1.plot(residuals)
     ax2.hist(residuals, density=True)
+    plt.show()
+
+
+def plotForecast(test, fc, se, conf, steps):
+    """displays the ARIMA forecast results"""
+    fc = pd.Series(fc, index=test[:steps].index)
+    lower = pd.Series(conf[:, 0], index=test[:steps].index)
+    upper = pd.Series(conf[:, 1], index=test[:steps].index)
+
+    plt.figure(figsize=(16, 8))
+    plt.plot(test[:steps], label='actual')
+    plt.plot(fc, label='forecast')
+    plt.fill_between(lower.index, lower, upper, color='k', alpha=0.1)
+    plt.title('Forecast vs Actual')
+    plt.legend(loc='upper left')
     plt.show()
