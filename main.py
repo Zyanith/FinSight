@@ -1,10 +1,11 @@
 import datetime
 import numpy as np
+import pandas as pd
 from coingeckoAPI import getCryptoData
 from googleTrendsAPI import getGoogleTrendsDay
 from plotData import plotPriceWithTrend, plotPrice
-from supprtVectorRegression import formatTimeData, svrLinear, svrPoly, svrRBF
-
+from supportVectorRegression import formatTimeData, svrLinear, svrPoly, svrRBF
+from arimaForecasting import ADFtest, ARIMAcall, getResidualErrors, plotResults
 
 # Get price and trends data
 bitcoinPrice = getCryptoData('bitcoin', 'eur', '1')
@@ -25,22 +26,16 @@ for day in bitcoinPrice['prices']:
 time = time[:len(trend)]
 price = price[:len(trend)]
 
+price_df = pd.DataFrame(price)
+#price_df.columns(['price'])
+
+
 # plot data
 # plotPrice(time, price)
-plotPriceWithTrend(time, price, trend)
+# plotPriceWithTrend(time, price, trend)
 
-# converting time to be used in svr
-svrtime = formatTimeData(time)
-
-# intialicing and fitting prediciton functions
-svr_lin = svrLinear(time, price)
-svr_poly = svrPoly(time, price)
-svr_rbf = svrRBF(time, price)
-
-
-# make prediction
-dayToPredict = datetime.datetime.now()
-predictedDay = formatTimeData(dayToPredict)
-print('The Linear SVR prediction:', svr_lin.predict(predictedDay))
-print('The Polynomial SVR prediction:', svr_poly.predict(predictedDay))
-print('The RBF SVR prediction:', svr_rbf.predict(predictedDay))
+# ARIMA forcast
+ADF = ADFtest(price_df)
+ARIMAmodell = ARIMAcall(price_df)
+getResidualErrors(ARIMAmodell)
+plotResults(ARIMAmodell, 170)
